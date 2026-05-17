@@ -1,0 +1,21 @@
+# Dossier de compilation Maven — généré automatiquement, inutile sur GitHub
+target/
+
+# Fichiers compilés Java
+*.class
+
+# Fichier déployable — généré par Maven
+*.war
+*.jar
+
+# Fichiers de configuration Eclipse
+.settings/
+.classpath
+.project
+
+# Fichiers de configuration VS Code
+.vscode/
+
+# Variables d'environnement — contient des mots de passe, ne jamais pousser
+.env
+EOF
