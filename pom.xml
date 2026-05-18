@@ -61,6 +61,20 @@
             <version>0.4</version>
         </dependency>
 
+        <!-- Jackson — convertit les objets Java en JSON -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.17.0</version>
+        </dependency>
+
+        <!-- Support des dates Java 8+ pour Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>2.17.0</version>
+        </dependency>
+
     </dependencies>
 
     
