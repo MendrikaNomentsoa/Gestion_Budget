@@ -18,4 +18,20 @@ target/
 
 # Variables d'environnement — contient des mots de passe, ne jamais pousser
 .env
+
+# Dépendances Node — très lourd, inutile sur GitHub
+node_modules/
+
+# Fichiers de build React
+build/
+
+# Variables d'environnement React
+.env.local
+.env.production
+
+# Logs
+npm-debug.log*
+
+# Cache
+.cache/
 EOF
