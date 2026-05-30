@@ -1,11 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 import authService from '../services/authService';
 
-/**
- * Context d'authentification
- * Permet à tous les composants d'accéder à l'état de connexion
- * sans passer les props manuellement à chaque niveau
- */
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -17,8 +12,8 @@ export const AuthProvider = ({ children }) => {
         return data;
     };
 
-    const register = async (nom, email, password) => {
-        const data = await authService.register(nom, email, password);
+    const register = async (nom, email, password, montantInitial = 0) => {
+        const data = await authService.register(nom, email, password, montantInitial);
         setUser(authService.getUser());
         return data;
     };
@@ -41,8 +36,4 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-/**
- * Hook personnalisé pour utiliser le contexte
- * ex: const { user, login, logout } = useAuth();
- */
 export const useAuth = () => useContext(AuthContext);

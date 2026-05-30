@@ -7,6 +7,7 @@ export default function RegisterPage() {
     const [nom, setNom] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [montantInitial, setMontantInitial] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { register } = useAuth();
@@ -16,8 +17,7 @@ export default function RegisterPage() {
         e.preventDefault();
         setLoading(true);
         try {
-            await register(nom, email, password);
-            // Déconnecte après inscription pour forcer le login
+            await register(nom, email, password, parseFloat(montantInitial) || 0);
             localStorage.removeItem('token');
             localStorage.removeItem('user');
             toast.success('Compte créé avec succès ! Connectez-vous.');
@@ -57,6 +57,14 @@ export default function RegisterPage() {
                         value={password}
                         onChange={e => setPassword(e.target.value)}
                         required
+                    />
+                    <input
+                        style={styles.input}
+                        type="number"
+                        placeholder="Solde initial (Ar) — optionnel"
+                        value={montantInitial}
+                        onChange={e => setMontantInitial(e.target.value)}
+                        min="0"
                     />
                     <button style={styles.button} type="submit" disabled={loading}>
                         {loading ? 'Inscription...' : "S'inscrire"}
