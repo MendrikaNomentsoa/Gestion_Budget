@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 
 export default function RegisterPage() {
     const [nom, setNom] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [erreur, setErreur] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { register } = useAuth();
@@ -15,12 +15,15 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setErreur('');
         try {
             await register(nom, email, password);
-            navigate('/dashboard');
+            // Déconnecte après inscription pour forcer le login
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            toast.success('Compte créé avec succès ! Connectez-vous.');
+            navigate('/login');
         } catch (err) {
-            setErreur(err.response?.data?.erreur || 'Erreur inscription');
+            toast.error(err.response?.data?.erreur || 'Erreur inscription');
         } finally {
             setLoading(false);
         }
@@ -30,7 +33,6 @@ export default function RegisterPage() {
         <div style={styles.container}>
             <div style={styles.card}>
                 <h2 style={styles.title}>Inscription</h2>
-                {erreur && <p style={styles.erreur}>{erreur}</p>}
                 <form onSubmit={handleSubmit}>
                     <input
                         style={styles.input}
@@ -106,11 +108,6 @@ const styles = {
         borderRadius: '6px',
         fontSize: '16px',
         cursor: 'pointer'
-    },
-    erreur: {
-        color: 'red',
-        textAlign: 'center',
-        marginBottom: '16px'
     },
     link: {
         textAlign: 'center',

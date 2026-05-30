@@ -1,9 +1,7 @@
 package com.budget.repository;
 
 import java.util.List;
-
 import com.budget.entity.Category;
-
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -16,6 +14,14 @@ public class CategoryRepository {
 
     public void sauvegarder(Category category) {
         em.persist(category);
+    }
+
+    /**
+     * Met à jour une catégorie existante
+     * merge() → JPA détecte les changements et fait un UPDATE
+     */
+    public Category modifier(Category category) {
+        return em.merge(category);
     }
 
     public Category trouverParId(Long id) {

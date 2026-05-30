@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [erreur, setErreur] = useState('');
     const [loading, setLoading] = useState(false);
 
     const { login } = useAuth();
@@ -14,12 +14,12 @@ export default function LoginPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        setErreur('');
         try {
             await login(email, password);
+            toast.success('Connexion réussie !');
             navigate('/dashboard');
         } catch (err) {
-            setErreur(err.response?.data?.erreur || 'Erreur de connexion');
+            toast.error(err.response?.data?.erreur || 'Email ou mot de passe incorrect');
         } finally {
             setLoading(false);
         }
@@ -29,7 +29,6 @@ export default function LoginPage() {
         <div style={styles.container}>
             <div style={styles.card}>
                 <h2 style={styles.title}>Connexion</h2>
-                {erreur && <p style={styles.erreur}>{erreur}</p>}
                 <form onSubmit={handleSubmit}>
                     <input
                         style={styles.input}
@@ -97,11 +96,6 @@ const styles = {
         borderRadius: '6px',
         fontSize: '16px',
         cursor: 'pointer'
-    },
-    erreur: {
-        color: 'red',
-        textAlign: 'center',
-        marginBottom: '16px'
     },
     link: {
         textAlign: 'center',
