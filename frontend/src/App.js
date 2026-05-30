@@ -9,6 +9,7 @@ import DashboardPage from './pages/DashboardPage';
 import TransactionsPage from './pages/TransactionsPage';
 import CategoriesPage from './pages/CategoriesPage';
 import Navbar from './components/Navbar';
+import BudgetsPage from './pages/BudgetsPage';
 
 function PrivateRoute({ children }) {
     const { isAuthenticated } = useAuth();
@@ -37,6 +38,9 @@ function App() {
                     <Route path="/register" element={<RegisterPage />} />
                     <Route path="/dashboard" element={
                         <PrivateRoute><DashboardPage /></PrivateRoute>
+                    } />
+                    <Route path="/budgets" element={
+                        <PrivateRoute><BudgetsPage /></PrivateRoute>
                     } />
                     <Route path="/transactions" element={
                         <PrivateRoute><TransactionsPage /></PrivateRoute>
