@@ -16,9 +16,10 @@ export default function Navbar() {
             <div style={styles.logo}>💰 Budget App</div>
             <div style={styles.liens}>
                 <Link style={styles.lien} to="/dashboard">Dashboard</Link>
-                <Link style={styles.lien} to="/budgets">Budgets</Link>
                 <Link style={styles.lien} to="/transactions">Transactions</Link>
                 <Link style={styles.lien} to="/categories">Catégories</Link>
+                <Link style={styles.lien} to="/budgets">Budgets</Link>
+                <Link style={styles.lien} to="/objectifs">Objectifs</Link>
             </div>
             <div style={styles.user}>
                 <span style={styles.nom}>👤 {user?.nom}</span>

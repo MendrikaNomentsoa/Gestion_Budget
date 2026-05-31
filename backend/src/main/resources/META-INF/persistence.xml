@@ -12,6 +12,7 @@
         <class>com.budget.entity.Transaction</class>
         <class>com.budget.entity.Category</class>
         <class>com.budget.entity.Budget</class>
+        <class>com.budget.entity.Objectif</class>
 
         <properties>
             <!-- Crée les tables automatiquement -->
