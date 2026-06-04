@@ -3,24 +3,32 @@ import api from './api';
 const authService = {
 
     login: async (email, password) => {
-        const response = await api.post('/auth/login', { email, password });
-        const { token, userId, nom, email: userEmail } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify({ userId, nom, email: userEmail }));
-        return response.data;
+        try {
+            const response = await api.post('/auth/login', { email, password });
+            const { token, userId, nom, email: userEmail } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify({ userId, nom, email: userEmail }));
+            return response.data;
+        } catch (err) {
+            throw err;
+        }
     },
 
     register: async (nom, email, password, montantInitial = 0) => {
-        const response = await api.post('/auth/register', {
-            nom,
-            email,
-            password,
-            montantInitial
-        });
-        const { token, userId, email: userEmail } = response.data;
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify({ userId, nom, email: userEmail }));
-        return response.data;
+        try {
+            const response = await api.post('/auth/register', {
+                nom,
+                email,
+                password,
+                montantInitial
+            });
+            const { token, userId, email: userEmail } = response.data;
+            localStorage.setItem('token', token);
+            localStorage.setItem('user', JSON.stringify({ userId, nom, email: userEmail }));
+            return response.data;
+        } catch (err) {
+            throw err;
+        }
     },
 
     logout: () => {

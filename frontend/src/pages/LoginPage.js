@@ -7,19 +7,42 @@ export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
+    const [erreurs, setErreurs] = useState({});
 
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const valider = () => {
+        const nouvErreurs = {};
+
+        if (!email.trim()) {
+            nouvErreurs.email = "L'email est obligatoire";
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) {
+            nouvErreurs.email = "Format d'email invalide (ex: nom@gmail.com)";
+        }
+
+        if (!password) {
+            nouvErreurs.password = 'Le mot de passe est obligatoire';
+        } else if (password.length < 6) {
+            nouvErreurs.password = 'Le mot de passe doit contenir au moins 6 caractères';
+        }
+
+        setErreurs(nouvErreurs);
+        return Object.keys(nouvErreurs).length === 0;
+    };
+
+    const handleSubmit = async () => {
+        if (!valider()) return;
+
         setLoading(true);
         try {
             await login(email, password);
-            toast.success('Connexion réussie !');
+            toast.success('Connexion réussie ! Bienvenue 👋');
             navigate('/dashboard');
         } catch (err) {
-            toast.error(err.response?.data?.erreur || 'Email ou mot de passe incorrect');
+            setErreurs({
+                global: err.response?.data?.erreur || 'Email ou mot de passe incorrect'
+            });
         } finally {
             setLoading(false);
         }
@@ -29,27 +52,58 @@ export default function LoginPage() {
         <div style={styles.container}>
             <div style={styles.card}>
                 <h2 style={styles.title}>Connexion</h2>
-                <form onSubmit={handleSubmit}>
-                    <input
-                        style={styles.input}
-                        type="email"
-                        placeholder="Email"
-                        value={email}
-                        onChange={e => setEmail(e.target.value)}
-                        required
-                    />
-                    <input
-                        style={styles.input}
-                        type="password"
-                        placeholder="Mot de passe"
-                        value={password}
-                        onChange={e => setPassword(e.target.value)}
-                        required
-                    />
-                    <button style={styles.button} type="submit" disabled={loading}>
+
+                {erreurs.global && (
+                    <div style={styles.erreurGlobal}>
+                        ⚠️ {erreurs.global}
+                    </div>
+                )}
+
+                <div>
+                    <div style={styles.champ}>
+                        <input
+                            style={{
+                                ...styles.input,
+                                borderColor: erreurs.email ? '#E74C3C' : '#ddd'
+                            }}
+                            type="text"
+                            placeholder="Email"
+                            value={email}
+                            onChange={e => {
+                                setEmail(e.target.value);
+                                setErreurs({ ...erreurs, email: '', global: '' });
+                            }}
+                        />
+                        {erreurs.email && <p style={styles.erreurChamp}>{erreurs.email}</p>}
+                    </div>
+
+                    <div style={styles.champ}>
+                        <input
+                            style={{
+                                ...styles.input,
+                                borderColor: erreurs.password ? '#E74C3C' : '#ddd'
+                            }}
+                            type="password"
+                            placeholder="Mot de passe"
+                            value={password}
+                            onChange={e => {
+                                setPassword(e.target.value);
+                                setErreurs({ ...erreurs, password: '', global: '' });
+                            }}
+                        />
+                        {erreurs.password && <p style={styles.erreurChamp}>{erreurs.password}</p>}
+                    </div>
+
+                    <button
+                        style={styles.button}
+                        type="button"
+                        onClick={handleSubmit}
+                        disabled={loading}
+                    >
                         {loading ? 'Connexion...' : 'Se connecter'}
                     </button>
-                </form>
+                </div>
+
                 <p style={styles.link}>
                     Pas de compte ? <Link to="/register">S'inscrire</Link>
                 </p>
@@ -71,21 +125,34 @@ const styles = {
         padding: '40px',
         borderRadius: '8px',
         boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-        width: '360px'
+        width: '100%',
+        maxWidth: '400px'
     },
-    title: {
-        textAlign: 'center',
-        marginBottom: '24px',
-        color: '#333'
+    title: { textAlign: 'center', marginBottom: '24px', color: '#333' },
+    erreurGlobal: {
+        backgroundColor: '#FDEDEC',
+        border: '1px solid #E74C3C',
+        color: '#E74C3C',
+        padding: '12px',
+        borderRadius: '6px',
+        marginBottom: '16px',
+        fontSize: '14px',
+        textAlign: 'center'
     },
+    champ: { marginBottom: '16px' },
     input: {
         width: '100%',
         padding: '12px',
-        marginBottom: '16px',
         borderRadius: '6px',
         border: '1px solid #ddd',
         fontSize: '14px',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        outline: 'none'
+    },
+    erreurChamp: {
+        color: '#E74C3C',
+        fontSize: '12px',
+        margin: '4px 0 0 0'
     },
     button: {
         width: '100%',
@@ -95,10 +162,8 @@ const styles = {
         border: 'none',
         borderRadius: '6px',
         fontSize: '16px',
-        cursor: 'pointer'
+        cursor: 'pointer',
+        marginTop: '8px'
     },
-    link: {
-        textAlign: 'center',
-        marginTop: '16px'
-    }
+    link: { textAlign: 'center', marginTop: '16px' }
 };

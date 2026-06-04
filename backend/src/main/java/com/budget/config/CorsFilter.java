@@ -1,41 +1,42 @@
 package com.budget.config;
 
 import java.io.IOException;
-
 import jakarta.ws.rs.container.ContainerRequestContext;
+import jakarta.ws.rs.container.ContainerRequestFilter;
 import jakarta.ws.rs.container.ContainerResponseContext;
 import jakarta.ws.rs.container.ContainerResponseFilter;
+import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.ext.Provider;
 
 /**
- * CORS = Cross-Origin Resource Sharing
- * 
- * Problème : React tourne sur http://localhost:3000
- *            WildFly tourne sur http://localhost:8080
- * 
- * Par défaut, le navigateur bloque les requêtes entre deux origines différentes
- * Ce filtre dit au navigateur "c'est OK, autorise React à appeler WildFly"
- * 
- * @Provider → JAX-RS détecte et applique ce filtre automatiquement
- *             sur TOUTES les réponses de l'API
+ * Gère le CORS pour toutes les requêtes
+ * Implémente les deux filtres request et response
  */
 @Provider
-public class CorsFilter implements ContainerResponseFilter {
+public class CorsFilter implements ContainerRequestFilter, ContainerResponseFilter {
+
+    @Override
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        // Si c'est une requête OPTIONS (preflight) → répondre directement
+        if (requestContext.getMethod().equalsIgnoreCase("OPTIONS")) {
+            requestContext.abortWith(
+                Response.ok()
+                    .header("Access-Control-Allow-Origin", "http://localhost:3000")
+                    .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                    .header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+                    .header("Access-Control-Max-Age", "86400")
+                    .build()
+            );
+        }
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext,
                        ContainerResponseContext responseContext) throws IOException {
-
-        // Autorise React (localhost:3000) à appeler l'API
-        responseContext.getHeaders().add("Access-Control-Allow-Origin", "http://localhost:3000");
-
-        // Autorise ces méthodes HTTP
-        responseContext.getHeaders().add("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-
-        // Autorise ces headers — dont Authorization pour le JWT
-        responseContext.getHeaders().add("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
-        // Le navigateur peut mettre en cache cette autorisation pendant 24h
-        responseContext.getHeaders().add("Access-Control-Max-Age", "86400");
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Origin", "http://localhost:3000");
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+        responseContext.getHeaders().putSingle("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        responseContext.getHeaders().putSingle("Access-Control-Max-Age", "86400");
+        responseContext.getHeaders().putSingle("Access-Control-Expose-Headers", "Authorization");
     }
 }

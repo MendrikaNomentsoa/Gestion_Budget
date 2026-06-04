@@ -7,15 +7,24 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(authService.getUser());
 
     const login = async (email, password) => {
-        const data = await authService.login(email, password);
-        setUser(authService.getUser());
-        return data;
+        try {
+            const data = await authService.login(email, password);
+            setUser(authService.getUser());
+            return data;
+        } catch (err) {
+            // Propage l'erreur vers LoginPage
+            throw err;
+        }
     };
 
     const register = async (nom, email, password, montantInitial = 0) => {
-        const data = await authService.register(nom, email, password, montantInitial);
-        setUser(authService.getUser());
-        return data;
+        try {
+            const data = await authService.register(nom, email, password, montantInitial);
+            setUser(authService.getUser());
+            return data;
+        } catch (err) {
+            throw err;
+        }
     };
 
     const logout = () => {
